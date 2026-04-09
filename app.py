@@ -9,22 +9,32 @@ def home():
 
 @app.route('/run', methods=['POST'])
 def run():
-    data = request.json
-    n = data['n']
-    edges = data['edges']
+    try:
+        data = request.get_json()
 
-    input_data = f"{n} {len(edges)}\n"
-    for u, v, w in edges:
-        input_data += f"{u} {v} {w}\n"
+        n = data['n']
+        edges = data['edges']
 
-    result = subprocess.run(
-        ["kruskal"],
-        input=input_data,
-        text=True,
-        capture_output=True
-    )
+        input_data = f"{n} {len(edges)}\n"
+        for u, v, w in edges:
+            input_data += f"{u} {v} {w}\n"
 
-    return jsonify({"output": result.stdout})
+        result = subprocess.run(
+            ["./kruskal"],   # IMPORTANT FIX
+            input=input_data,
+            text=True,
+            capture_output=True
+        )
+
+        print("INPUT:", input_data)
+        print("OUTPUT:", result.stdout)
+        print("ERROR:", result.stderr)
+
+        return jsonify({"output": result.stdout})
+
+    except Exception as e:
+        print("EXCEPTION:", str(e))
+        return jsonify({"output": "Error: " + str(e)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
