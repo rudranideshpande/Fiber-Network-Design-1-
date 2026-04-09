@@ -38,17 +38,19 @@ int main() {
 
     int cost = 0;
 
+    printf("Edges in MST:\n");
+
     for(int i=0;i<e;i++) {
         int pu = find(edges[i].u);
         int pv = find(edges[i].v);
 
         if(pu != pv) {
-            printf("%d %d %d\n", edges[i].u, edges[i].v, edges[i].w);
+            printf("%d - %d : %d\n", edges[i].u, edges[i].v, edges[i].w);
             cost += edges[i].w;
             unionSet(pu, pv);
         }
     }
 
-    printf("Total:%d\n", cost);
+    printf("Total Cost: %d\n", cost);
     return 0;
 }
