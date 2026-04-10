@@ -2,61 +2,89 @@
 <html>
 <head>
     <title>Fiber Network Design</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+        }
+
+        .container {
+            width: 60%;
+            margin: auto;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+
+        button {
+            background: #22c55e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+    </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h1>🌐 Fiber Network Design</h1>
-    <p class="subtitle">Kruskal Minimum Spanning Tree</p>
+    <h2>Fiber Network Design</h2>
 
-    <div class="card">
-        <label>Enter Input</label>
+    <h3>Locations</h3>
+    <input placeholder="Hospital">
+    <input placeholder="School">
+    <input placeholder="Mall">
+    <input placeholder="Office">
 
-        <textarea id="input" rows="10">
-4 5
-Hospital School Mall Office
-Hospital School 10
-Hospital Mall 6
-Hospital Office 5
-School Office 15
-Mall Office 4
-        </textarea>
+    <h3>Connections</h3>
+    <table>
+        <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Cost</th>
+        </tr>
 
-        <button onclick="runAlgo()">Run Algorithm</button>
-    </div>
+        <tr>
+            <td><input placeholder="Hospital"></td>
+            <td><input placeholder="School"></td>
+            <td><input placeholder="10"></td>
+        </tr>
 
-    <div class="output-card">
-        <h2>Output</h2>
-        <pre id="output">Run the algorithm to see output...</pre>
-    </div>
+        <tr>
+            <td><input placeholder="Hospital"></td>
+            <td><input placeholder="Mall"></td>
+            <td><input placeholder="6"></td>
+        </tr>
+
+    </table>
+
+    <br>
+    <button>Run Algorithm</button>
 </div>
-
-<script>
-async function runAlgo() {
-    let raw = document.getElementById("input").value.trim().split("\n");
-
-    let first = raw[0].split(" ");
-    let n = parseInt(first[0]);
-
-    let locations = raw[1].split(" ");
-
-    let edges = [];
-    for (let i = 2; i < raw.length; i++) {
-        let [u, v, w] = raw[i].split(" ");
-        edges.push([u, v, parseInt(w)]);
-    }
-
-    let res = await fetch('/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ n, locations, edges })
-    });
-
-    let data = await res.json();
-    document.getElementById("output").innerText = data.output;
-}
-</script>
 
 </body>
 </html>
