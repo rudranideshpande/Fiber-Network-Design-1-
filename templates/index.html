@@ -2,49 +2,79 @@
 <html>
 <head>
     <title>Fiber Network Design</title>
+
     <style>
         body {
+            font-family: 'Segoe UI', sans-serif;
             background: #0f172a;
             color: white;
-            font-family: Arial;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
         }
 
         .container {
-            width: 60%;
-            margin: auto;
             background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 30px;
+            border-radius: 15px;
+            width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
         input {
-            padding: 8px;
-            margin: 5px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 8px;
             border: none;
+            background: #e5e7eb;
         }
 
-        table {
-            width: 100%;
+        .connections {
             margin-top: 15px;
         }
 
-        th, td {
-            padding: 10px;
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
             background: #22c55e;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             color: white;
+            font-size: 16px;
             cursor: pointer;
         }
 
         button:hover {
             background: #16a34a;
+        }
+
+        .output {
+            margin-top: 20px;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 100px;
         }
     </style>
 </head>
@@ -52,39 +82,95 @@
 <body>
 
 <div class="container">
-    <h2>Fiber Network Design</h2>
+    <h1>Fiber Network Design</h1>
 
+    <!-- Locations -->
     <h3>Locations</h3>
-    <input placeholder="Hospital">
-    <input placeholder="School">
-    <input placeholder="Mall">
-    <input placeholder="Office">
+    <div class="grid">
+        <input id="loc1" placeholder="Hospital">
+        <input id="loc2" placeholder="School">
+        <input id="loc3" placeholder="Mall">
+        <input id="loc4" placeholder="Office">
+    </div>
 
+    <!-- Connections -->
     <h3>Connections</h3>
-    <table>
-        <tr>
-            <th>From</th>
-            <th>To</th>
-            <th>Cost</th>
-        </tr>
 
-        <tr>
-            <td><input placeholder="Hospital"></td>
-            <td><input placeholder="School"></td>
-            <td><input placeholder="10"></td>
-        </tr>
+    <div class="connections">
+        <div class="row">
+            <input placeholder="From" id="f1">
+            <input placeholder="To" id="t1">
+            <input placeholder="Cost" id="c1">
+        </div>
 
-        <tr>
-            <td><input placeholder="Hospital"></td>
-            <td><input placeholder="Mall"></td>
-            <td><input placeholder="6"></td>
-        </tr>
+        <div class="row">
+            <input placeholder="From" id="f2">
+            <input placeholder="To" id="t2">
+            <input placeholder="Cost" id="c2">
+        </div>
 
-    </table>
+        <div class="row">
+            <input placeholder="From" id="f3">
+            <input placeholder="To" id="t3">
+            <input placeholder="Cost" id="c3">
+        </div>
 
-    <br>
-    <button>Run Algorithm</button>
+        <div class="row">
+            <input placeholder="From" id="f4">
+            <input placeholder="To" id="t4">
+            <input placeholder="Cost" id="c4">
+        </div>
+
+        <div class="row">
+            <input placeholder="From" id="f5">
+            <input placeholder="To" id="t5">
+            <input placeholder="Cost" id="c5">
+        </div>
+    </div>
+
+    <button onclick="runAlgo()">Run Algorithm</button>
+
+    <div class="output" id="output">
+        Output will appear here...
+    </div>
 </div>
+
+<script>
+async function runAlgo() {
+    let locations = [];
+
+    for (let i = 1; i <= 4; i++) {
+        let val = document.getElementById("loc" + i).value.trim();
+        if (val) locations.push(val);
+    }
+
+    let edges = [];
+
+    for (let i = 1; i <= 5; i++) {
+        let u = document.getElementById("f" + i).value.trim();
+        let v = document.getElementById("t" + i).value.trim();
+        let w = parseInt(document.getElementById("c" + i).value);
+
+        if (u && v && !isNaN(w)) {
+            edges.push([u, v, w]);
+        }
+    }
+
+    let res = await fetch('/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            n: locations.length,
+            locations: locations,
+            edges: edges
+        })
+    });
+
+    let data = await res.json();
+
+    document.getElementById("output").innerText = data.output;
+}
+</script>
 
 </body>
 </html>
