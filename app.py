@@ -13,28 +13,29 @@ def run():
         data = request.get_json()
 
         n = data['n']
+        locations = data['locations']
         edges = data['edges']
 
+        # Build correct input
         input_data = f"{n} {len(edges)}\n"
+        input_data += " ".join(locations) + "\n"
+
         for u, v, w in edges:
             input_data += f"{u} {v} {w}\n"
 
         result = subprocess.run(
-            ["./kruskal"],   # IMPORTANT FIX
+            ["./kruskal"],
             input=input_data,
             text=True,
             capture_output=True
         )
 
-        print("INPUT:", input_data)
-        print("OUTPUT:", result.stdout)
-        print("ERROR:", result.stderr)
-
-        return jsonify({"output": result.stdout})
+        return jsonify({
+            "output": result.stdout if result.stdout else result.stderr
+        })
 
     except Exception as e:
-        print("EXCEPTION:", str(e))
         return jsonify({"output": "Error: " + str(e)})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+    app.run(debug=True)
