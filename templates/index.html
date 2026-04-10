@@ -93,32 +93,32 @@
     <h3>Connections</h3>
 
     <div class="row">
-        <select id="f1"></select>
-        <select id="t1"></select>
+        <select id="f1"><option>Select</option></select>
+        <select id="t1"><option>Select</option></select>
         <input placeholder="Cost" id="c1">
     </div>
 
     <div class="row">
-        <select id="f2"></select>
-        <select id="t2"></select>
+        <select id="f2"><option>Select</option></select>
+        <select id="t2"><option>Select</option></select>
         <input placeholder="Cost" id="c2">
     </div>
 
     <div class="row">
-        <select id="f3"></select>
-        <select id="t3"></select>
+        <select id="f3"><option>Select</option></select>
+        <select id="t3"><option>Select</option></select>
         <input placeholder="Cost" id="c3">
     </div>
 
     <div class="row">
-        <select id="f4"></select>
-        <select id="t4"></select>
+        <select id="f4"><option>Select</option></select>
+        <select id="t4"><option>Select</option></select>
         <input placeholder="Cost" id="c4">
     </div>
 
     <div class="row">
-        <select id="f5"></select>
-        <select id="t5"></select>
+        <select id="f5"><option>Select</option></select>
+        <select id="t5"><option>Select</option></select>
         <input placeholder="Cost" id="c5">
     </div>
 
@@ -131,7 +131,7 @@
 
 <script>
 
-// Update dropdown options based on locations
+// Update dropdowns dynamically
 function updateDropdowns() {
     let locations = [];
 
@@ -144,14 +144,13 @@ function updateDropdowns() {
         let from = document.getElementById("f" + i);
         let to = document.getElementById("t" + i);
 
-        from.innerHTML = "";
-        to.innerHTML = "";
+        // Reset with default option
+        from.innerHTML = "<option value=''>Select</option>";
+        to.innerHTML = "<option value=''>Select</option>";
 
         locations.forEach(loc => {
-            let opt1 = new Option(loc, loc);
-            let opt2 = new Option(loc, loc);
-            from.add(opt1);
-            to.add(opt2);
+            from.add(new Option(loc, loc));
+            to.add(new Option(loc, loc));
         });
     }
 }
@@ -196,9 +195,6 @@ async function runAlgo() {
 
     document.getElementById("output").innerText = data.output;
 }
-
-// Initialize empty dropdowns
-updateDropdowns();
 
 </script>
 
