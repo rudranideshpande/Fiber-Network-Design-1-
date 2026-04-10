@@ -17,12 +17,11 @@
             background: #1e293b;
             padding: 30px;
             border-radius: 15px;
-            width: 600px;
+            width: 650px;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
         }
 
         h3 {
@@ -35,15 +34,11 @@
             gap: 15px;
         }
 
-        input {
+        input, select {
             padding: 10px;
             border-radius: 8px;
             border: none;
             background: #e5e7eb;
-        }
-
-        .connections {
-            margin-top: 15px;
         }
 
         .row {
@@ -74,7 +69,8 @@
             background: #0f172a;
             padding: 15px;
             border-radius: 10px;
-            min-height: 100px;
+            min-height: 120px;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -87,48 +83,46 @@
     <!-- Locations -->
     <h3>Locations</h3>
     <div class="grid">
-        <input id="loc1" placeholder="Hospital">
-        <input id="loc2" placeholder="School">
-        <input id="loc3" placeholder="Mall">
-        <input id="loc4" placeholder="Office">
+        <input id="loc1" placeholder="Hospital" oninput="updateDropdowns()">
+        <input id="loc2" placeholder="School" oninput="updateDropdowns()">
+        <input id="loc3" placeholder="Mall" oninput="updateDropdowns()">
+        <input id="loc4" placeholder="Office" oninput="updateDropdowns()">
     </div>
 
     <!-- Connections -->
     <h3>Connections</h3>
 
-    <div class="connections">
-        <div class="row">
-            <input placeholder="From" id="f1">
-            <input placeholder="To" id="t1">
-            <input placeholder="Cost" id="c1">
-        </div>
-
-        <div class="row">
-            <input placeholder="From" id="f2">
-            <input placeholder="To" id="t2">
-            <input placeholder="Cost" id="c2">
-        </div>
-
-        <div class="row">
-            <input placeholder="From" id="f3">
-            <input placeholder="To" id="t3">
-            <input placeholder="Cost" id="c3">
-        </div>
-
-        <div class="row">
-            <input placeholder="From" id="f4">
-            <input placeholder="To" id="t4">
-            <input placeholder="Cost" id="c4">
-        </div>
-
-        <div class="row">
-            <input placeholder="From" id="f5">
-            <input placeholder="To" id="t5">
-            <input placeholder="Cost" id="c5">
-        </div>
+    <div class="row">
+        <select id="f1"></select>
+        <select id="t1"></select>
+        <input placeholder="Cost" id="c1">
     </div>
 
-    <button onclick="runAlgo()">Run Algorithm</button>
+    <div class="row">
+        <select id="f2"></select>
+        <select id="t2"></select>
+        <input placeholder="Cost" id="c2">
+    </div>
+
+    <div class="row">
+        <select id="f3"></select>
+        <select id="t3"></select>
+        <input placeholder="Cost" id="c3">
+    </div>
+
+    <div class="row">
+        <select id="f4"></select>
+        <select id="t4"></select>
+        <input placeholder="Cost" id="c4">
+    </div>
+
+    <div class="row">
+        <select id="f5"></select>
+        <select id="t5"></select>
+        <input placeholder="Cost" id="c5">
+    </div>
+
+    <button onclick="runAlgo()">🚀 Run Algorithm</button>
 
     <div class="output" id="output">
         Output will appear here...
@@ -136,6 +130,33 @@
 </div>
 
 <script>
+
+// Update dropdown options based on locations
+function updateDropdowns() {
+    let locations = [];
+
+    for (let i = 1; i <= 4; i++) {
+        let val = document.getElementById("loc" + i).value.trim();
+        if (val) locations.push(val);
+    }
+
+    for (let i = 1; i <= 5; i++) {
+        let from = document.getElementById("f" + i);
+        let to = document.getElementById("t" + i);
+
+        from.innerHTML = "";
+        to.innerHTML = "";
+
+        locations.forEach(loc => {
+            let opt1 = new Option(loc, loc);
+            let opt2 = new Option(loc, loc);
+            from.add(opt1);
+            to.add(opt2);
+        });
+    }
+}
+
+// Run algorithm
 async function runAlgo() {
     let locations = [];
 
@@ -147,13 +168,18 @@ async function runAlgo() {
     let edges = [];
 
     for (let i = 1; i <= 5; i++) {
-        let u = document.getElementById("f" + i).value.trim();
-        let v = document.getElementById("t" + i).value.trim();
+        let u = document.getElementById("f" + i).value;
+        let v = document.getElementById("t" + i).value;
         let w = parseInt(document.getElementById("c" + i).value);
 
         if (u && v && !isNaN(w)) {
             edges.push([u, v, w]);
         }
+    }
+
+    if (locations.length === 0 || edges.length === 0) {
+        document.getElementById("output").innerText = "❌ Please enter valid data!";
+        return;
     }
 
     let res = await fetch('/run', {
@@ -170,6 +196,10 @@ async function runAlgo() {
 
     document.getElementById("output").innerText = data.output;
 }
+
+// Initialize empty dropdowns
+updateDropdowns();
+
 </script>
 
 </body>
