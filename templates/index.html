@@ -2,200 +2,60 @@
 <html>
 <head>
     <title>Fiber Network Design</title>
-
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0f172a;
-            color: white;
-            display: flex;
-            justify-content: center;
-            padding-top: 40px;
-        }
-
-        .container {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 15px;
-            width: 650px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        h3 {
-            margin-top: 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        input, select {
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: #e5e7eb;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        button {
-            margin-top: 20px;
-            width: 100%;
-            padding: 12px;
-            background: #22c55e;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #16a34a;
-        }
-
-        .output {
-            margin-top: 20px;
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 10px;
-            min-height: 120px;
-            white-space: pre-wrap;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
 
 <div class="container">
-    <h1>Fiber Network Design</h1>
+    <h1>🌐 Fiber Network Design</h1>
+    <p class="subtitle">Kruskal Minimum Spanning Tree</p>
 
-    <!-- Locations -->
-    <h3>Locations</h3>
-    <div class="grid">
-        <input id="loc1" placeholder="Hospital" oninput="updateDropdowns()">
-        <input id="loc2" placeholder="School" oninput="updateDropdowns()">
-        <input id="loc3" placeholder="Mall" oninput="updateDropdowns()">
-        <input id="loc4" placeholder="Office" oninput="updateDropdowns()">
+    <div class="card">
+        <label>Enter Input</label>
+
+        <textarea id="input" rows="10">
+4 5
+Hospital School Mall Office
+Hospital School 10
+Hospital Mall 6
+Hospital Office 5
+School Office 15
+Mall Office 4
+        </textarea>
+
+        <button onclick="runAlgo()">Run Algorithm</button>
     </div>
 
-    <!-- Connections -->
-    <h3>Connections</h3>
-
-    <div class="row">
-        <select id="f1"><option>Select</option></select>
-        <select id="t1"><option>Select</option></select>
-        <input placeholder="Cost" id="c1">
-    </div>
-
-    <div class="row">
-        <select id="f2"><option>Select</option></select>
-        <select id="t2"><option>Select</option></select>
-        <input placeholder="Cost" id="c2">
-    </div>
-
-    <div class="row">
-        <select id="f3"><option>Select</option></select>
-        <select id="t3"><option>Select</option></select>
-        <input placeholder="Cost" id="c3">
-    </div>
-
-    <div class="row">
-        <select id="f4"><option>Select</option></select>
-        <select id="t4"><option>Select</option></select>
-        <input placeholder="Cost" id="c4">
-    </div>
-
-    <div class="row">
-        <select id="f5"><option>Select</option></select>
-        <select id="t5"><option>Select</option></select>
-        <input placeholder="Cost" id="c5">
-    </div>
-
-    <button onclick="runAlgo()">🚀 Run Algorithm</button>
-
-    <div class="output" id="output">
-        Output will appear here...
+    <div class="output-card">
+        <h2>Output</h2>
+        <pre id="output">Run the algorithm to see output...</pre>
     </div>
 </div>
 
 <script>
-
-// Update dropdowns dynamically
-function updateDropdowns() {
-    let locations = [];
-
-    for (let i = 1; i <= 4; i++) {
-        let val = document.getElementById("loc" + i).value.trim();
-        if (val) locations.push(val);
-    }
-
-    for (let i = 1; i <= 5; i++) {
-        let from = document.getElementById("f" + i);
-        let to = document.getElementById("t" + i);
-
-        // Reset with default option
-        from.innerHTML = "<option value=''>Select</option>";
-        to.innerHTML = "<option value=''>Select</option>";
-
-        locations.forEach(loc => {
-            from.add(new Option(loc, loc));
-            to.add(new Option(loc, loc));
-        });
-    }
-}
-
-// Run algorithm
 async function runAlgo() {
-    let locations = [];
+    let raw = document.getElementById("input").value.trim().split("\n");
 
-    for (let i = 1; i <= 4; i++) {
-        let val = document.getElementById("loc" + i).value.trim();
-        if (val) locations.push(val);
-    }
+    let first = raw[0].split(" ");
+    let n = parseInt(first[0]);
+
+    let locations = raw[1].split(" ");
 
     let edges = [];
-
-    for (let i = 1; i <= 5; i++) {
-        let u = document.getElementById("f" + i).value;
-        let v = document.getElementById("t" + i).value;
-        let w = parseInt(document.getElementById("c" + i).value);
-
-        if (u && v && !isNaN(w)) {
-            edges.push([u, v, w]);
-        }
-    }
-
-    if (locations.length === 0 || edges.length === 0) {
-        document.getElementById("output").innerText = "❌ Please enter valid data!";
-        return;
+    for (let i = 2; i < raw.length; i++) {
+        let [u, v, w] = raw[i].split(" ");
+        edges.push([u, v, parseInt(w)]);
     }
 
     let res = await fetch('/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            n: locations.length,
-            locations: locations,
-            edges: edges
-        })
+        body: JSON.stringify({ n, locations, edges })
     });
 
     let data = await res.json();
-
     document.getElementById("output").innerText = data.output;
 }
-
 </script>
 
 </body>
