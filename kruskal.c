@@ -4,7 +4,6 @@
 
 #define MAX 100
 
-// Edge structure
 typedef struct {
     int u, v, w;
 } Edge;
@@ -13,11 +12,9 @@ Edge edges[MAX];
 char locations[MAX][50];
 int parent[MAX];
 
-// Performance counters
 int findCount = 0;
 int unionCount = 0;
 
-// Get index of location name
 int getIndex(char name[], int n) {
     for(int i = 0; i < n; i++) {
         if(strcmp(locations[i], name) == 0)
@@ -40,45 +37,54 @@ void unionSet(int a, int b) {
     parent[a] = b;
 }
 
-// Sort edges by weight
+// Sort edges
 int compare(const void* a, const void* b) {
     return ((Edge*)a)->w - ((Edge*)b)->w;
 }
 
 int main() {
     int n, e;
+    char line[200];
 
-    printf("Enter number of locations and connections:\n");
-    scanf("%d %d", &n, &e);
+    // Read first line
+    fgets(line, sizeof(line), stdin);
+    sscanf(line, "%d %d", &n, &e);
 
-    printf("Enter location names:\n");
-    for(int i = 0; i < n; i++) {
-        scanf("%s", locations[i]);
+    // Read locations
+    fgets(line, sizeof(line), stdin);
+    char *token = strtok(line, " \n");
+    for(int i = 0; i < n && token != NULL; i++) {
+        strcpy(locations[i], token);
+        token = strtok(NULL, " \n");
     }
 
-    char loc1[50], loc2[50];
-
-    printf("Enter connections (location1 location2 cost):\n");
+    // Read edges
     for(int i = 0; i < e; i++) {
-        scanf("%s %s %d", loc1, loc2, &edges[i].w);
+        fgets(line, sizeof(line), stdin);
+
+        char loc1[50], loc2[50];
+        sscanf(line, "%s %s %d", loc1, loc2, &edges[i].w);
 
         edges[i].u = getIndex(loc1, n);
         edges[i].v = getIndex(loc2, n);
+
+        if(edges[i].u == -1 || edges[i].v == -1) {
+            printf("Invalid location name!\n");
+            return 0;
+        }
     }
 
     // Initialize parent
-    for(int i = 0; i < n; i++) {
+    for(int i = 0; i < n; i++)
         parent[i] = i;
-    }
 
-    // Sort edges (important step)
+    // Sort edges
     qsort(edges, e, sizeof(Edge), compare);
 
     int totalCost = 0;
 
-    printf("\nSmart City Fiber Network Design\n");
+    printf("Smart City Fiber Network Design\n");
     printf("====================================\n");
-    printf("Selected Fiber Connections:\n");
 
     for(int i = 0; i < e; i++) {
         int pu = find(edges[i].u);
@@ -98,7 +104,6 @@ int main() {
     printf("------------------------------------\n");
     printf("Minimum Total Fiber Cost: %d\n", totalCost);
 
-    // Performance Analysis
     printf("\nPerformance Analysis:\n");
     printf("Find operations: %d\n", findCount);
     printf("Union operations: %d\n", unionCount);
